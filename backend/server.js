@@ -3,10 +3,16 @@ const express = require('express');
 const {Pool} = require('pg');
 const cors = require('cors');
 
-
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',')
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: function(origin,callback) {
+        if(!origin || allowedOrigins.includes(origin)){
+            callback(null,true)
+        }else {
+            callback(new Error('Not Allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 const port = process.env.PORT;
